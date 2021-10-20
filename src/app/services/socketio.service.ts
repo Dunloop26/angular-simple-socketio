@@ -14,14 +14,22 @@ export class SocketioService {
   constructor() {
     this.socket.on('connect', () => {
       console.log('Connected to socket');
+      this.subject.next('Connected');
+    });
+
+    this.socket.on('error', (error) => {
+      console.log(`An error has been detected: ${error}`)
+      this.subject.next(error);
     });
 
     this.socket.on('disconnect', () => {
       console.log('Disconnected from socket');
+      this.subject.next('Disconnected');
     })
 
-    this.socket.on('ping', () => {
-      console.log('Ping from socket');
+    this.socket.onAny((event, arg: any) => {
+      console.log(`A event ${event} has been received from socket!`);
+      this.subject.next(event);
     });
   }
 
